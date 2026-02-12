@@ -8,17 +8,26 @@
   ],
   "license": "ISC",
   "author": "Abhishek Kumar",
-  "type": "module",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src/app.ts"
+    "dev": "tsx watch src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js"
   },
   "dependencies": {
+    "dotenv": "17.2.4",
     "express": "^5.2.1",
-    "mongoose": "^9.2.0",
-    "nodemon": "^3.1.11"
+    "mongoose": "^9.2.0"
   },
   "devDependencies": {
-    "@types/express": "^5.0.6"
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.2.3",
+    "@typescript-eslint/eslint-plugin": "^8.55.0",
+    "@typescript-eslint/parser": "^8.55.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.1",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
   }
 }
