@@ -3,6 +3,7 @@ import { CONFIG_VARS } from './config/env';
 import { Server } from 'http';
 import { connectDB } from './config/db';
 import { gracefulShutdown } from './config/shutdown';
+import User from './models/user';
 
 const app = express();
 
@@ -10,23 +11,30 @@ const { PORT } = CONFIG_VARS;
 
 let server: Server | undefined;
 
-app.use('/admin', (_req, res, next) => {
-  const token = 'abc';
-  const isAuthenticated = token === 'abc';
+app.use(express.json());
+// app.use('/admin', (_req, res, next) => {
+//   const token = 'abc';
+//   const isAuthenticated = token === 'abc';
 
-  if (!isAuthenticated) {
-    res.status(401).json({ message: 'Unauthorized' });
-  } else {
-    next();
-  }
-});
+//   if (!isAuthenticated) {
+//     res.status(401).json({ message: 'Unauthorized' });
+//   } else {
+//     next();
+//   }
+// });
 
-app.get('/admin', (_req, res) => {
-  res.json({ message: 'Welcome to the admin panel!' });
-});
+app.post('/api/signup', async (_req, res) => {
+  const user = new User({
+    firstName: 'Abhishek',
+    lastName: 'Kumar',
+    email: 'abhishekkr1993@gmail.com',
+    gender: 'male',
+    age: 32,
+  });
 
-app.get('/', (_req, res) => {
-  res.json({ message: 'Welcome to the main application!' });
+  await user.save();
+
+  res.json({ message: 'User created successfully', user });
 });
 
 async function bootstrap(): Promise<void> {
