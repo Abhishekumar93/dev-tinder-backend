@@ -6,7 +6,14 @@ export interface ILogin extends IEmail {
   password: string;
 }
 
-export interface ISignup extends IEmail {
+export interface IUserAbout {
+  profilePic?: string;
+  gender: string;
+  about?: string;
+  bio?: string;
+}
+
+export interface ISignup extends IEmail, IUserAbout {
   firstName: string;
   lastName: string;
   password?: string;
@@ -15,13 +22,6 @@ export interface ISignup extends IEmail {
 
 export interface IUser extends ISignup {
   otp?: string;
-  profilePic?: string;
-  gender: string;
-  createdAt?: Date;
-  updatedAt?: Date;
 }
 
-export type UserDetails = Omit<
-  IUser,
-  'password' | 'otp' | 'createdAt' | 'updatedAt'
->;
+export type UserDetails = Omit<IUser, 'password' | 'otp'>;

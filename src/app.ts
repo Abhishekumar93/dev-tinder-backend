@@ -63,7 +63,6 @@ app.get(
     }
   }
 );
-
 app.get(
   '/api/users-list',
   async (_req: Request, res: Response<IApiListResponse<UserDetails[]>>) => {
@@ -78,6 +77,38 @@ app.get(
       });
     } catch (error) {
       res.status(500).json({ message: 'Something went wrong' });
+    }
+  }
+);
+app.patch(
+  '/api/user',
+  async (
+    req: Request<{}, {}, Partial<ISignup> & { userId: ObjectId }>,
+    res: Response<IApiResponse<UserDetails>>
+  ) => {
+    try {
+      const { userId, ...updateData } = req.body;
+      const user: UserDetails | null = await User.findByIdAndUpdate(
+        userId,
+        updateData,
+        { after: true, runValidators: true }
+      ).select('-password -otp -createdAt -updatedAt -__v');
+
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.json({
+        message: 'User updated successfully',
+        data: user,
+      });
+    } catch (error) {
+      res
+        .status(500)
+        .json({
+          message:
+            error instanceof Error ? error.message : 'Something went wrong',
+        });
     }
   }
 );
