@@ -1,9 +1,17 @@
-import express from 'express';
+import express, { Request, Response } from 'express';
 import { CONFIG_VARS } from './config/env';
 import { Server } from 'http';
 import { connectDB } from './config/db';
 import { gracefulShutdown } from './config/shutdown';
 import User from './models/user';
+import {
+  IApiListResponse,
+  IApiResponse,
+  IEmail,
+  ISignup,
+  UserDetails,
+} from './interfaceAndTypes';
+import { ObjectId } from 'mongoose';
 
 const app = express();
 
@@ -12,30 +20,91 @@ const { PORT } = CONFIG_VARS;
 let server: Server | undefined;
 
 app.use(express.json());
-// app.use('/admin', (_req, res, next) => {
-//   const token = 'abc';
-//   const isAuthenticated = token === 'abc';
 
-//   if (!isAuthenticated) {
-//     res.status(401).json({ message: 'Unauthorized' });
-//   } else {
-//     next();
-//   }
-// });
+app.post(
+  '/api/signup',
+  async (req: Request<{}, {}, ISignup>, res: Response) => {
+    const { email } = req.body;
 
-app.post('/api/signup', async (_req, res) => {
-  const user = new User({
-    firstName: 'Abhishek',
-    lastName: 'Kumar',
-    email: 'abhishekkr1993@gmail.com',
-    gender: 'male',
-    age: 32,
-  });
+    try {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: 'User already exists' });
+      }
 
-  await user.save();
+      const user = new User(req.body);
+      await user.save();
 
-  res.json({ message: 'User created successfully', user });
-});
+      res.json({ message: 'User created successfully', user });
+    } catch (error) {
+      return res.status(500).json({ message: 'Something went wrong' });
+    }
+  }
+);
+
+app.get(
+  '/api/user',
+  async (
+    req: Request<{}, {}, IEmail>,
+    res: Response<IApiResponse<UserDetails>>
+  ) => {
+    const email = req.body.email;
+
+    try {
+      const user: UserDetails | null = await User.findOne({ email }).select(
+        '-password -otp -createdAt -updatedAt -__v'
+      );
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+      res.json({ message: 'User found', data: user });
+    } catch (error) {
+      res.status(500).json({ message: 'Something went wrong' });
+    }
+  }
+);
+
+app.get(
+  '/api/users-list',
+  async (_req: Request, res: Response<IApiListResponse<UserDetails[]>>) => {
+    try {
+      const users: UserDetails[] = await User.find()
+        .select('-password -otp -createdAt -updatedAt -__v')
+        .sort({ createdAt: -1 });
+
+      res.json({
+        message: 'Users list retrieved successfully',
+        data: { count: users.length, records: users },
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Something went wrong' });
+    }
+  }
+);
+app.delete(
+  '/api/user',
+  async (
+    req: Request<{}, {}, { userId: ObjectId }>,
+    res: Response<IApiResponse<UserDetails>>
+  ) => {
+    try {
+      const { userId } = req.body;
+      const user = await User.findByIdAndDelete(userId);
+
+      if (!user) {
+        return res
+          .status(404)
+          .json({ message: 'Delete failed: User not found' });
+      }
+
+      res.json({
+        message: 'User deleted successfully',
+      });
+    } catch (error) {
+      res.status(500).json({ message: 'Something went wrong' });
+    }
+  }
+);
 
 async function bootstrap(): Promise<void> {
   try {
