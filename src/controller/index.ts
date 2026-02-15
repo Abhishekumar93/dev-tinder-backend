@@ -1,4 +1,4 @@
-export { registerUser } from './auth';
+export { registerUser, loginUser } from './auth';
 export {
   getUserDetail,
   getUserLists,
