@@ -1,9 +1,26 @@
 import { NextFunction, Request, Response } from 'express';
-import { IApiResponse, ISignup, IUser } from '../interfaceAndTypes';
+import {
+  IApiResponse,
+  ILogin,
+  ISignup,
+  IUser,
+  UserDetails,
+} from '../interfaceAndTypes';
 import { User } from '../models';
-import { registerUserValidator, validateLoginData } from '../helper/validator';
 import bcrypt from 'bcrypt';
-import { ILogin, UserDetails } from '../interfaceAndTypes/user';
+import { registerUserValidator, validateLoginData } from '../utils';
+import HttpStatus from 'http-status';
+import { RESPONSE_MESSAGE } from '../constant';
+
+const { BAD_REQUEST } = HttpStatus;
+const {
+  USER_ALREADY_EXISTS,
+  USER_REGISTERED,
+  INVALID_CREDENTIALS,
+  PASSWORD_OR_OTP_REQUIRED,
+  PASSWORD_OTP_REQUIRED,
+  USER_LOGGED_IN,
+} = RESPONSE_MESSAGE;
 
 export const registerUser = async (
   req: Request<{}, {}, ISignup>,
@@ -15,7 +32,7 @@ export const registerUser = async (
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(BAD_REQUEST).json({ message: USER_ALREADY_EXISTS });
     }
 
     registerUserValidator(req);
@@ -26,7 +43,7 @@ export const registerUser = async (
     const user = new User({ ...req.body, password: hashedPassword });
     await user.save();
 
-    res.json({ message: 'User created successfully', user });
+    res.json({ message: USER_REGISTERED, user });
   } catch (error) {
     next(error);
   }
@@ -44,26 +61,26 @@ export const loginUser = async (
 
     const user: IUser | null = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(BAD_REQUEST).json({ message: INVALID_CREDENTIALS });
     }
 
     if (password && otp) {
-      throw new Error('Provide either password or OTP, not both');
+      throw new Error(PASSWORD_OTP_REQUIRED);
     }
 
     if (password) {
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) {
-        return res.status(400).json({ message: 'Invalid credentials' });
+        return res.status(BAD_REQUEST).json({ message: INVALID_CREDENTIALS });
       }
     } else if (otp) {
       if (otp !== user.otp) {
-        return res.status(400).json({ message: 'Invalid OTP' });
+        return res.status(BAD_REQUEST).json({ message: INVALID_CREDENTIALS });
       }
     } else {
       return res
-        .status(400)
-        .json({ message: 'Password or OTP is required for login' });
+        .status(BAD_REQUEST)
+        .json({ message: PASSWORD_OR_OTP_REQUIRED });
     }
 
     const { age, firstName, lastName, gender, about, bio, profilePic } = user;
@@ -78,7 +95,7 @@ export const loginUser = async (
       profilePic,
     };
     return res.json({
-      message: 'Login successful',
+      message: USER_LOGGED_IN,
       data,
     });
   } catch (error) {

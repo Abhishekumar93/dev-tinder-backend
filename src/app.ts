@@ -3,17 +3,8 @@ import { CONFIG_VARS } from './config/env';
 import { Server } from 'http';
 import { connectDB } from './config/db';
 import { gracefulShutdown } from './config/shutdown';
-import User from './models/user';
-import {
-  IApiListResponse,
-  IApiResponse,
-  IEmail,
-  ISignup,
-  UserDetails,
-} from './interfaceAndTypes';
-import { ObjectId } from 'mongoose';
-import { formatMongooseError } from './helper/util';
 import { authRoutes, userRoutes } from './routes';
+import { formatMongooseError } from './utils';
 
 const app = express();
 

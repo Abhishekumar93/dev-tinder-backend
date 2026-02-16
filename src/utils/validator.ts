@@ -1,9 +1,8 @@
 import { Request } from 'express';
-import { REGISTER_ALLOWED_FIELDS, REGISTER_REQUIRED_FIELDS } from '../constant';
-import { ISignup } from '../interfaceAndTypes';
+import { ILogin, ISignup } from '../interfaceAndTypes';
 import validator from 'validator';
-import { ILogin } from '../interfaceAndTypes/user';
-import { errorFormater } from './util';
+import { REGISTER_ALLOWED_FIELDS, REGISTER_REQUIRED_FIELDS } from '../constant';
+import { formatErrors } from './errorFormator';
 
 export const registerUserValidator = (req: Request<{}, {}, ISignup>) => {
   const updates = Object.keys(req.body);
@@ -66,7 +65,7 @@ export const registerUserValidator = (req: Request<{}, {}, ISignup>) => {
   if (about && typeof about !== 'string') errors.push('About must be a string');
   if (bio && typeof bio !== 'string') errors.push('Bio must be a string');
 
-  errorFormater(errors);
+  formatErrors(errors);
 };
 
 export const validateLoginData = (req: Request<{}, {}, ILogin>) => {
@@ -78,7 +77,7 @@ export const validateLoginData = (req: Request<{}, {}, ILogin>) => {
   if (!password && !otp)
     errors.push('Either password or OTP is required for login');
 
-  errorFormater(errors);
+  formatErrors(errors);
 };
 
 export const validateEmail = (email: string) => {

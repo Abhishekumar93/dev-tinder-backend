@@ -13,7 +13,7 @@ export const formatMongooseError = (err: unknown) => {
   return { status: 500, message: 'Something went wrong' };
 };
 
-export const errorFormater = (errors: string[]) => {
+export const formatErrors = (errors: string[]) => {
   if (errors.length > 0) {
     const finalError = errors.join('; ');
     throw new Error(
