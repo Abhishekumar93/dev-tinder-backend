@@ -1,7 +1,7 @@
-export { registerUser, loginUser } from './auth';
+export { registerUser, loginUser } from './auth.controller';
 export {
   getUserDetail,
   getUserLists,
   updateUserDetail,
   deleteUser,
-} from './user';
+} from './user.controller';

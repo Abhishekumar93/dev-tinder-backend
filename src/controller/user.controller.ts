@@ -2,15 +2,30 @@ import { NextFunction, Request, Response } from 'express';
 import {
   IApiListResponse,
   IApiResponse,
-  IEmail,
-  ISignup,
   UserDetails,
 } from '../interfaceAndTypes';
 import { User } from '../models';
-import { ObjectId } from 'mongoose';
+import HttpStatus from 'http-status';
+import { RESPONSE_MESSAGE } from '../constant';
+import {
+  updateUserInput,
+  userEmail,
+  userIdParams,
+} from '../interfaceAndTypes/user';
+
+const { INTERNAL_SERVER_ERROR, NOT_FOUND } = HttpStatus;
+const {
+  USER_NOT_FOUND,
+  SOMETHING_WENT_WRONG,
+  USER_RETRIEVED,
+  USER_LIST_RETRIEVED,
+  USER_UPDATED,
+  USER_DELETED,
+  DELETE_USER_FAILED,
+} = RESPONSE_MESSAGE;
 
 export const getUserDetail = async (
-  req: Request<{}, {}, IEmail>,
+  req: Request<{}, {}, userEmail>,
   res: Response<IApiResponse<UserDetails>>
 ) => {
   const email = req.body.email;
@@ -20,11 +35,11 @@ export const getUserDetail = async (
       '-password -otp -createdAt -updatedAt -__v'
     );
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(NOT_FOUND).json({ message: USER_NOT_FOUND });
     }
-    res.json({ message: 'User found', data: user });
+    res.json({ message: USER_RETRIEVED, data: user });
   } catch (error) {
-    res.status(500).json({ message: 'Something went wrong' });
+    res.status(INTERNAL_SERVER_ERROR).json({ message: SOMETHING_WENT_WRONG });
   }
 };
 
@@ -38,44 +53,21 @@ export const getUserLists = async (
       .sort({ createdAt: -1 });
 
     res.json({
-      message: 'Users list retrieved successfully',
+      message: USER_LIST_RETRIEVED,
       data: { count: users.length, records: users },
     });
   } catch (error) {
-    res.status(500).json({ message: 'Something went wrong' });
+    res.status(INTERNAL_SERVER_ERROR).json({ message: SOMETHING_WENT_WRONG });
   }
 };
 
 export const updateUserDetail = async (
-  req: Request<{ userId: ObjectId }, {}, Partial<Omit<ISignup, 'email'>>>,
+  req: Request<userIdParams, {}, updateUserInput>,
   res: Response<IApiResponse<UserDetails>>,
   next: NextFunction
 ) => {
   try {
     const { userId } = req.params;
-
-    const allowedFields: (keyof Omit<ISignup, 'email'>)[] = [
-      'about',
-      'age',
-      'bio',
-      'firstName',
-      'gender',
-      'lastName',
-      'password',
-      'profilePic',
-    ];
-
-    const updates = Object.keys(req.body);
-
-    const invalidFields = updates.filter(
-      (field) => !allowedFields.includes(field as keyof Omit<ISignup, 'email'>)
-    );
-
-    if (invalidFields.length > 0) {
-      return res.status(400).json({
-        message: `Invalid update fields provided: ${invalidFields.join(', ')}`,
-      });
-    }
 
     const user: UserDetails | null = await User.findByIdAndUpdate(
       userId,
@@ -84,11 +76,11 @@ export const updateUserDetail = async (
     ).select('-password -otp -createdAt -updatedAt -__v');
 
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(NOT_FOUND).json({ message: USER_NOT_FOUND });
     }
 
     res.json({
-      message: 'User updated successfully',
+      message: USER_UPDATED,
       data: user,
     });
   } catch (error) {
@@ -97,7 +89,7 @@ export const updateUserDetail = async (
 };
 
 export const deleteUser = async (
-  req: Request<{ userId: ObjectId }, {}, {}>,
+  req: Request<userIdParams, {}, {}>,
   res: Response<IApiResponse<UserDetails>>
 ) => {
   try {
@@ -105,13 +97,13 @@ export const deleteUser = async (
     const user = await User.findByIdAndDelete(userId);
 
     if (!user) {
-      return res.status(404).json({ message: 'Delete failed: User not found' });
+      return res.status(NOT_FOUND).json({ message: DELETE_USER_FAILED });
     }
 
     res.json({
-      message: 'User deleted successfully',
+      message: USER_DELETED,
     });
   } catch (error) {
-    res.status(500).json({ message: 'Something went wrong' });
+    res.status(INTERNAL_SERVER_ERROR).json({ message: SOMETHING_WENT_WRONG });
   }
 };

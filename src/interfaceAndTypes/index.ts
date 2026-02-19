@@ -1,10 +1,2 @@
-export {
-  IEmail,
-  ISignup,
-  IUser,
-  UserDetails,
-  ILogin,
-  IUserAbout,
-  UserPasswordOtp,
-} from './user';
+export { IUser, UserDetails } from './user';
 export { IApiResponse, IApiListResponse } from './response';

@@ -1,8 +1,15 @@
 import mongoose from 'mongoose';
 import { IUser } from '../interfaceAndTypes/user';
 import validator from 'validator';
+import { RESPONSE_MESSAGE } from '../constant';
 
 const { Schema } = mongoose;
+const {
+  INVALID_EMAIL,
+  PASSWORD_REGEX,
+  INVALID_GENDER,
+  PROFILE_PIC_INVALID_URL,
+} = RESPONSE_MESSAGE;
 
 const userSchema = new Schema<IUser>(
   {
@@ -17,7 +24,7 @@ const userSchema = new Schema<IUser>(
       immutable: true,
       validate(value: string) {
         if (!validator.isEmail(value)) {
-          throw new Error('Email is not valid');
+          throw new Error(INVALID_EMAIL);
         }
       },
     },
@@ -27,9 +34,7 @@ const userSchema = new Schema<IUser>(
       required: true,
       validate(value: string) {
         if (!validator.isStrongPassword(value)) {
-          throw new Error(
-            'Password must include uppercase letters, lowercase letters, numbers, and symbols'
-          );
+          throw new Error(PASSWORD_REGEX);
         }
       },
     },
@@ -40,7 +45,7 @@ const userSchema = new Schema<IUser>(
       default: 'https://openclipart.org/image/800px/346569',
       validate(value: string) {
         if (!validator.isURL(value)) {
-          throw new Error('Profile picture must be a valid URL');
+          throw new Error(PROFILE_PIC_INVALID_URL);
         }
       },
     },
@@ -49,7 +54,7 @@ const userSchema = new Schema<IUser>(
       required: true,
       validate(value: string) {
         if (!['male', 'female', 'other'].includes(value.toLowerCase())) {
-          throw new Error('Gender must be either male, female, or other');
+          throw new Error(INVALID_GENDER);
         }
       },
     },

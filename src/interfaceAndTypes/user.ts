@@ -1,29 +1,28 @@
-export interface IEmail {
-  email: string;
-}
+import z from 'zod';
+import {
+  loginUserSchema,
+  registerUserSchema,
+  updateUserSchema,
+} from '../SchemaValidator';
+import { emailSchema, userIdSchema } from '../SchemaValidator/user.schema';
 
-export interface IUserAbout {
+export interface IUser {
+  firstName: string;
+  lastName: string;
+  age: number;
+  email: string;
   password: string;
   profilePic?: string;
   gender: string;
   about?: string;
   bio?: string;
-}
-
-export interface ISignup extends IEmail, IUserAbout {
-  firstName: string;
-  lastName: string;
-  age: number;
-}
-
-export interface IUser extends ISignup {
   otp?: string;
 }
 
 export type UserDetails = Omit<IUser, 'password' | 'otp'>;
 
-export type UserPasswordOtp = Pick<IUser, 'password' | 'otp'>;
-type LoginRequiredFields = Pick<IUser, 'email'>;
-type LoginOptionalFields = Partial<UserPasswordOtp>;
-
-export type ILogin = LoginRequiredFields & LoginOptionalFields;
+export type registerUserInput = z.infer<typeof registerUserSchema>;
+export type updateUserInput = z.infer<typeof updateUserSchema>;
+export type loginUserInput = z.infer<typeof loginUserSchema>;
+export type userIdParams = z.infer<typeof userIdSchema>;
+export type userEmail = z.infer<typeof emailSchema>;

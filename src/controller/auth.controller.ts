@@ -1,29 +1,22 @@
 import { NextFunction, Request, Response } from 'express';
-import {
-  IApiResponse,
-  ILogin,
-  ISignup,
-  IUser,
-  UserDetails,
-} from '../interfaceAndTypes';
+import { IApiResponse, IUser, UserDetails } from '../interfaceAndTypes';
 import { User } from '../models';
 import bcrypt from 'bcrypt';
-import { registerUserValidator, validateLoginData } from '../utils';
 import HttpStatus from 'http-status';
 import { RESPONSE_MESSAGE } from '../constant';
+import { loginUserInput, registerUserInput } from '../interfaceAndTypes/user';
 
 const { BAD_REQUEST } = HttpStatus;
 const {
   USER_ALREADY_EXISTS,
   USER_REGISTERED,
   INVALID_CREDENTIALS,
-  PASSWORD_OR_OTP_REQUIRED,
   PASSWORD_OTP_REQUIRED,
   USER_LOGGED_IN,
 } = RESPONSE_MESSAGE;
 
 export const registerUser = async (
-  req: Request<{}, {}, ISignup>,
+  req: Request<{}, {}, registerUserInput>,
   res: Response,
   next: NextFunction
 ) => {
@@ -34,8 +27,6 @@ export const registerUser = async (
     if (existingUser) {
       return res.status(BAD_REQUEST).json({ message: USER_ALREADY_EXISTS });
     }
-
-    registerUserValidator(req);
 
     const { password } = req.body;
     const hashedPassword = await bcrypt.hash(password, 12);
@@ -50,13 +41,11 @@ export const registerUser = async (
 };
 
 export const loginUser = async (
-  req: Request<{}, {}, ILogin>,
+  req: Request<{}, {}, loginUserInput>,
   res: Response<IApiResponse<UserDetails>>,
   next: NextFunction
 ) => {
   try {
-    validateLoginData(req);
-
     const { email, password, otp } = req.body;
 
     const user: IUser | null = await User.findOne({ email });
@@ -73,14 +62,8 @@ export const loginUser = async (
       if (!isMatch) {
         return res.status(BAD_REQUEST).json({ message: INVALID_CREDENTIALS });
       }
-    } else if (otp) {
-      if (otp !== user.otp) {
-        return res.status(BAD_REQUEST).json({ message: INVALID_CREDENTIALS });
-      }
-    } else {
-      return res
-        .status(BAD_REQUEST)
-        .json({ message: PASSWORD_OR_OTP_REQUIRED });
+    } else if (otp !== user.otp) {
+      return res.status(BAD_REQUEST).json({ message: INVALID_CREDENTIALS });
     }
 
     const { age, firstName, lastName, gender, about, bio, profilePic } = user;
