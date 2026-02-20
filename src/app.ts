@@ -5,6 +5,7 @@ import { connectDB } from './config/db';
 import { gracefulShutdown } from './config/shutdown';
 import { authRoutes, userRoutes } from './routes';
 import { formatMongooseError } from './utils';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
@@ -13,6 +14,7 @@ const { PORT } = CONFIG_VARS;
 let server: Server | undefined;
 
 app.use(express.json());
+app.use(cookieParser());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/user', userRoutes);

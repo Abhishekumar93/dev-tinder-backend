@@ -5,6 +5,9 @@ import bcrypt from 'bcrypt';
 import HttpStatus from 'http-status';
 import { RESPONSE_MESSAGE } from '../constant';
 import { loginUserInput, registerUserInput } from '../interfaceAndTypes/user';
+import { generateJwtToken } from '../utils';
+import { ObjectId } from 'mongoose';
+import { CONFIG_VARS } from '../config/env';
 
 const { BAD_REQUEST } = HttpStatus;
 const {
@@ -14,6 +17,7 @@ const {
   PASSWORD_OTP_REQUIRED,
   USER_LOGGED_IN,
 } = RESPONSE_MESSAGE;
+const { JWT_EXPIRES_IN, NODE_ENV } = CONFIG_VARS;
 
 export const registerUser = async (
   req: Request<{}, {}, registerUserInput>,
@@ -48,7 +52,9 @@ export const loginUser = async (
   try {
     const { email, password, otp } = req.body;
 
-    const user: IUser | null = await User.findOne({ email });
+    const user: (IUser & { _id: ObjectId }) | null = await User.findOne({
+      email,
+    });
     if (!user) {
       return res.status(BAD_REQUEST).json({ message: INVALID_CREDENTIALS });
     }
@@ -77,6 +83,14 @@ export const loginUser = async (
       bio,
       profilePic,
     };
+
+    const token = await generateJwtToken(user._id);
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+
     return res.json({
       message: USER_LOGGED_IN,
       data,

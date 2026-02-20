@@ -15,4 +15,5 @@ export const CONFIG_VARS = {
   PORT: Number(process.env.PORT || 8000),
   MONGO_URI: requireEnv('REACT_MONGO_URI'),
   JWT_SECRET: requireEnv('JWT_SECRET'),
+  JWT_EXPIRES_IN: requireEnv('JWT_EXPIRES_IN') || '1d',
 };
