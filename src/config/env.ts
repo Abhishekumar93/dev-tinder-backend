@@ -12,8 +12,8 @@ const requireEnv = (name: string): string => {
 
 export const CONFIG_VARS = {
   NODE_ENV: requireEnv('NODE_ENV'),
-  PORT: Number(process.env.PORT || 8000),
+  PORT: Number(requireEnv('PORT')),
   MONGO_URI: requireEnv('REACT_MONGO_URI'),
   JWT_SECRET: requireEnv('JWT_SECRET'),
-  JWT_EXPIRES_IN: requireEnv('JWT_EXPIRES_IN') || '1d',
+  JWT_EXPIRES_IN: Number(requireEnv('JWT_EXPIRES_IN')),
 };

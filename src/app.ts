@@ -6,6 +6,7 @@ import { gracefulShutdown } from './config/shutdown';
 import { authRoutes, userRoutes } from './routes';
 import { formatMongooseError } from './utils';
 import cookieParser from 'cookie-parser';
+import { authMiddleware } from './middleware';
 
 const app = express();
 
@@ -17,7 +18,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 app.use('/api/auth', authRoutes);
-app.use('/api/user', userRoutes);
+app.use('/api/user', authMiddleware, userRoutes);
 
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
   const { status, message } = formatMongooseError(err);

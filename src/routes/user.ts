@@ -1,12 +1,13 @@
 import { Router } from 'express';
 import {
   deleteUser,
+  getLoggedInUserDetail,
   getUserDetail,
   getUserLists,
   updateUserDetail,
 } from '../controller';
 import { validateRequest } from '../middleware';
-import { updateUserSchema } from '../SchemaValidator';
+import { emailSchema, updateUserSchema } from '../SchemaValidator';
 
 const userRoutes = Router();
 
@@ -17,6 +18,11 @@ userRoutes.patch(
   updateUserDetail
 );
 userRoutes.delete('/:userId', deleteUser);
-userRoutes.get('/', getUserDetail);
+userRoutes.get(
+  '/profile',
+  validateRequest({ body: emailSchema }),
+  getUserDetail
+);
+userRoutes.get('/', getLoggedInUserDetail);
 
 export default userRoutes;

@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import { IUser } from '../interfaceAndTypes/user';
+import { IUser } from '../interfaceAndTypes/user.interface';
 import validator from 'validator';
 import { RESPONSE_MESSAGE } from '../constant';
 

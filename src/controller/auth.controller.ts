@@ -4,7 +4,10 @@ import { User } from '../models';
 import bcrypt from 'bcrypt';
 import HttpStatus from 'http-status';
 import { RESPONSE_MESSAGE } from '../constant';
-import { loginUserInput, registerUserInput } from '../interfaceAndTypes/user';
+import {
+  loginUserInput,
+  registerUserInput,
+} from '../interfaceAndTypes/user.interface';
 import { generateJwtToken } from '../utils';
 import { ObjectId } from 'mongoose';
 import { CONFIG_VARS } from '../config/env';
@@ -38,9 +41,9 @@ export const registerUser = async (
     const user = new User({ ...req.body, password: hashedPassword });
     await user.save();
 
-    res.json({ message: USER_REGISTERED, user });
+    return res.json({ message: USER_REGISTERED, user });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -89,6 +92,7 @@ export const loginUser = async (
       httpOnly: true,
       secure: NODE_ENV === 'production',
       sameSite: 'strict',
+      maxAge: JWT_EXPIRES_IN * 1000,
     });
 
     return res.json({

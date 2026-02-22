@@ -4,4 +4,5 @@ export {
   getUserLists,
   updateUserDetail,
   deleteUser,
+  getLoggedInUserDetail,
 } from './user.controller';

@@ -12,11 +12,13 @@ const {
   PROFILE_PIC_INVALID_URL,
 } = RESPONSE_MESSAGE;
 
-export const emailSchema = z.object({
-  email: z.string().refine((val) => validator.isEmail(val), {
-    message: INVALID_EMAIL,
-  }),
-});
+export const emailSchema = z
+  .object({
+    email: z.string().refine((val) => validator.isEmail(val), {
+      message: INVALID_EMAIL,
+    }),
+  })
+  .strict();
 
 export const authDetailsSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters long'),
