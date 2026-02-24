@@ -16,8 +16,6 @@ export const RESPONSE_MESSAGE = {
   AUTHENTICATION_FAILED: 'Authentication failed',
   PASSWORD_OR_OTP_REQUIRED: 'Either password or OTP must be provided',
   PASSWORD_OTP_REQUIRED: 'Only one of password or OTP should be provided',
-  usernameTaken: (username: string) =>
-    `Username ${username} is already taken. Please provide another username`,
   SOMETHING_WENT_WRONG: 'Something went wrong. Please try again later.',
   INVALID_EMAIL: 'Email must be a valid email address',
   PASSWORD_REGEX:
@@ -25,4 +23,10 @@ export const RESPONSE_MESSAGE = {
   PASSWORD_MIN_LENGTH: 'Password must be at least 8 characters long',
   INVALID_GENDER: 'Gender must be male, female, or other',
   PROFILE_PIC_INVALID_URL: 'Profile picture must be a valid URL',
+  INVALID_CONNECTION_STATUS: 'Provided connection status is not a valid status',
+  INVALID_URL: 'Invalid URL',
+  CONNECTION_REQUESTS_EXIST: 'Connection request already exists',
+  CONNECTION_REQUEST_SENT: 'Interest sent successfully',
+  SELF_CONNECTION_REQUEST: 'Cannot send connection request to yourself',
+  CONNECTION_REQUEST_UPDATED: 'Connection request updated successfully',
 };

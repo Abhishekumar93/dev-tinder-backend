@@ -3,7 +3,7 @@ import { CONFIG_VARS } from './config/env';
 import { Server } from 'http';
 import { connectDB } from './config/db';
 import { gracefulShutdown } from './config/shutdown';
-import { authRoutes, userRoutes } from './routes';
+import { authRoutes, connectionRequestsRouter, userRoutes } from './routes';
 import { formatMongooseError } from './utils';
 import cookieParser from 'cookie-parser';
 import { authMiddleware } from './middleware';
@@ -14,11 +14,12 @@ const { PORT } = CONFIG_VARS;
 
 let server: Server | undefined;
 
-app.use(express.json());
 app.use(cookieParser());
+app.use(express.json());
 
 app.use('/api/auth', authRoutes);
 app.use('/api/user', authMiddleware, userRoutes);
+app.use('/api/connection-requests', authMiddleware, connectionRequestsRouter);
 
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
   const { status, message } = formatMongooseError(err);

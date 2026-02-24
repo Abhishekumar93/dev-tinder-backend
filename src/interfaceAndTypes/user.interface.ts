@@ -4,7 +4,11 @@ import {
   registerUserSchema,
   updateUserSchema,
 } from '../SchemaValidator';
-import { emailSchema, userIdSchema } from '../SchemaValidator/user.schema';
+import {
+  emailSchema,
+  passwordResetSchema,
+} from '../SchemaValidator/user.schema';
+import { ObjectId } from 'mongoose';
 
 export interface IUser {
   firstName: string;
@@ -19,10 +23,12 @@ export interface IUser {
   otp?: string;
 }
 
+export type DbObjectId = { _id: ObjectId };
 export type UserDetails = Omit<IUser, 'password' | 'otp'>;
+export type UserDetailsWithId = UserDetails & DbObjectId;
 
 export type registerUserInput = z.infer<typeof registerUserSchema>;
 export type updateUserInput = z.infer<typeof updateUserSchema>;
 export type loginUserInput = z.infer<typeof loginUserSchema>;
-export type userIdParams = z.infer<typeof userIdSchema>;
 export type userEmail = z.infer<typeof emailSchema>;
+export type userPassword = z.infer<typeof passwordResetSchema>;

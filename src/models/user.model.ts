@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import { IUser } from '../interfaceAndTypes/user.interface';
 import validator from 'validator';
-import { RESPONSE_MESSAGE } from '../constant';
+import { GENDER, RESPONSE_MESSAGE } from '../constant';
 
 const { Schema } = mongoose;
 const {
@@ -52,10 +52,9 @@ const userSchema = new Schema<IUser>(
     gender: {
       type: String,
       required: true,
-      validate(value: string) {
-        if (!['male', 'female', 'other'].includes(value.toLowerCase())) {
-          throw new Error(INVALID_GENDER);
-        }
+      enum: {
+        values: GENDER,
+        message: INVALID_GENDER,
       },
     },
     about: { type: String, trim: true },

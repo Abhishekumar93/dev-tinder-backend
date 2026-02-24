@@ -23,6 +23,8 @@ export const validateRequest =
 
     if (schemas.params) {
       const result = schemas.params.safeParse(req.params);
+      console.log(result, 'schema result');
+
       if (!result.success) {
         return handleError(result.error.issues);
       }

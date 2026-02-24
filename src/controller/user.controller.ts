@@ -2,16 +2,16 @@ import { NextFunction, Request, Response } from 'express';
 import {
   IApiListResponse,
   IApiResponse,
+  updateUserInput,
   UserDetails,
+  UserDetailsWithId,
+  userEmail,
+  userPassword,
 } from '../interfaceAndTypes';
 import { User } from '../models';
 import HttpStatus from 'http-status';
 import { RESPONSE_MESSAGE } from '../constant';
-import {
-  updateUserInput,
-  userEmail,
-  userIdParams,
-} from '../interfaceAndTypes/user.interface';
+import { generateHashPassword } from '../utils';
 
 const { NOT_FOUND } = HttpStatus;
 const {
@@ -20,7 +20,6 @@ const {
   USER_LIST_RETRIEVED,
   USER_UPDATED,
   USER_DELETED,
-  DELETE_USER_FAILED,
 } = RESPONSE_MESSAGE;
 
 export const getLoggedInUserDetail = async (
@@ -29,7 +28,7 @@ export const getLoggedInUserDetail = async (
   next: NextFunction
 ) => {
   try {
-    const user: UserDetails | undefined = req.user;
+    const user = req.user as UserDetails;
     return res.json({ message: USER_RETRIEVED, data: user });
   } catch (error) {
     return next(error);
@@ -76,22 +75,17 @@ export const getUserLists = async (
 };
 
 export const updateUserDetail = async (
-  req: Request<userIdParams, {}, updateUserInput>,
+  req: Request<{}, {}, updateUserInput>,
   res: Response<IApiResponse<UserDetails>>,
   next: NextFunction
 ) => {
   try {
-    const { userId } = req.params;
+    const { _id } = req.user as UserDetailsWithId;
 
-    const user: UserDetails | null = await User.findByIdAndUpdate(
-      userId,
-      req.body,
-      { returnDocument: 'after', runValidators: true }
-    ).select('-password -otp -createdAt -updatedAt -__v');
-
-    if (!user) {
-      return res.status(NOT_FOUND).json({ message: USER_NOT_FOUND });
-    }
+    const user = (await User.findByIdAndUpdate(_id, req.body, {
+      returnDocument: 'after',
+      runValidators: true,
+    }).select('-password -otp -createdAt -updatedAt -__v')) as UserDetails;
 
     return res.json({
       message: USER_UPDATED,
@@ -103,20 +97,44 @@ export const updateUserDetail = async (
 };
 
 export const deleteUser = async (
-  req: Request<userIdParams>,
+  req: Request,
   res: Response<IApiResponse<UserDetails>>,
   next: NextFunction
 ) => {
   try {
-    const { userId } = req.params;
-    const user = await User.findByIdAndDelete(userId);
-
-    if (!user) {
-      return res.status(NOT_FOUND).json({ message: DELETE_USER_FAILED });
-    }
-
-    res.json({
+    const { _id } = req.user as UserDetailsWithId;
+    await User.findByIdAndDelete(_id);
+    return res.json({
       message: USER_DELETED,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const updatePassword = async (
+  req: Request<{}, {}, userPassword>,
+  res: Response<IApiResponse<UserDetails>>,
+  next: NextFunction
+) => {
+  try {
+    const { _id } = req.user as UserDetailsWithId;
+    const { password } = req.body;
+
+    const hashedPassword = await generateHashPassword(password);
+
+    const user = (await User.findByIdAndUpdate(
+      _id,
+      { password: hashedPassword },
+      {
+        returnDocument: 'after',
+        runValidators: true,
+      }
+    ).select('-password -otp -createdAt -updatedAt -__v')) as UserDetails;
+
+    return res.json({
+      message: USER_UPDATED,
+      data: user,
     });
   } catch (error) {
     return next(error);

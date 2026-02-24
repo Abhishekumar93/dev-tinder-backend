@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { loginUser, registerUser } from '../controller';
+import { loginUser, logoutUser, registerUser } from '../controller';
 import { loginUserSchema, registerUserSchema } from '../SchemaValidator';
 import { validateRequest } from '../middleware';
 
@@ -15,5 +15,6 @@ authRoutes.post(
   validateRequest({ body: loginUserSchema }),
   loginUser
 );
+authRoutes.post('/logout', logoutUser);
 
 export default authRoutes;

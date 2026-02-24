@@ -4,3 +4,4 @@ export {
   updateUserSchema,
   emailSchema,
 } from './user.schema';
+export { receiverSchema } from './connectionRequest.schema';
