@@ -13,35 +13,37 @@ A RESTful API for DevTinder - a professional networking platform connecting deve
 
 ## 📁 Project Structure
 
+```
 src/
-├── app.ts # Express app & error handling
+├── app.ts                          # Express app & error handling
 ├── config/
-│ ├── db.ts # MongoDB connection
-│ ├── env.ts # Environment config
-│ └── shutdown.ts # Graceful shutdown
+│   ├── db.ts                       # MongoDB connection
+│   ├── env.ts                      # Environment config
+│   └── shutdown.ts                 # Graceful shutdown
 ├── constant/
-│ ├── enum.ts # Enums & constants
-│ ├── index.ts # Exports
-│ └── responseMessage.ts # API messages
+│   ├── enum.ts                     # Enums & constants
+│   ├── index.ts                    # Exports
+│   └── responseMessage.ts          # API messages
 ├── controller/
-│ ├── auth.controller.ts # Auth logic
-│ ├── user.controller.ts # User management
-│ ├── connectionRequests.controller.ts # Connection logic
-│ └── index.ts # Exports
-├── interfaceAndTypes/ # TypeScript interfaces
+│   ├── auth.controller.ts          # Auth logic
+│   ├── user.controller.ts          # User management
+│   ├── connectionRequests.controller.ts  # Connection logic
+│   └── index.ts                    # Exports
+├── interfaceAndTypes/              # TypeScript interfaces
 ├── middleware/
-│ ├── auth.middleware.ts # JWT verification
-│ ├── validate.middleware.ts # Request validation
-│ └── index.ts # Exports
-├── models/ # Mongoose schemas
-├── routes/ # API routes
-├── SchemaValidator/ # Zod schemas
-├── types/ # Type augmentation
+│   ├── auth.middleware.ts          # JWT verification
+│   ├── validate.middleware.ts      # Request validation
+│   └── index.ts                    # Exports
+├── models/                         # Mongoose schemas
+├── routes/                         # API routes
+├── SchemaValidator/                # Zod schemas
+├── types/                          # Type augmentation
 └── utils/
-├── jwtToken.ts # JWT utilities
-├── password.ts # Password hashing
-├── errorFormator.ts # Error handling
-└── index.ts # Exports
+    ├── jwtToken.ts                 # JWT utilities
+    ├── password.ts                 # Password hashing
+    ├── errorFormator.ts            # Error handling
+    └── index.ts                    # Exports
+```
 
 ## 🚀 Getting Started
 
@@ -51,15 +53,11 @@ src/
 npm install
 ```
 
-## 🚀 Getting Started
-
 ### Development
 
 ```bash
 npm run dev
 ```
-
-## 🚀 Getting Started
 
 ### Build & Production
 
