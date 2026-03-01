@@ -6,6 +6,7 @@ import {
 } from '../SchemaValidator';
 import {
   emailSchema,
+  feedsQuerySchema,
   passwordResetSchema,
 } from '../SchemaValidator/user.schema';
 import { ObjectId } from 'mongoose';
@@ -27,8 +28,10 @@ export type DbObjectId = { _id: ObjectId };
 export type UserDetails = Omit<IUser, 'password' | 'otp'>;
 export type UserDetailsWithId = UserDetails & DbObjectId;
 
-export type registerUserInput = z.infer<typeof registerUserSchema>;
-export type updateUserInput = z.infer<typeof updateUserSchema>;
-export type loginUserInput = z.infer<typeof loginUserSchema>;
-export type userEmail = z.infer<typeof emailSchema>;
-export type userPassword = z.infer<typeof passwordResetSchema>;
+export type RegisterUserInput = z.infer<typeof registerUserSchema>;
+export type UpdateUserInput = z.infer<typeof updateUserSchema>;
+export type LoginUserInput = z.infer<typeof loginUserSchema>;
+export type UserEmail = z.infer<typeof emailSchema>;
+export type UserPassword = z.infer<typeof passwordResetSchema>;
+
+export type FeedQuery = z.infer<typeof feedsQuerySchema>;

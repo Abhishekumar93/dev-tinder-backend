@@ -6,6 +6,7 @@ import {
   IApiResponse,
   IConnectionRequest,
   ReceiverId,
+  ReviewerId,
   UserDetailsWithId,
 } from '../interfaceAndTypes';
 import { Types } from 'mongoose';
@@ -17,6 +18,10 @@ const {
   SELF_CONNECTION_REQUEST,
   USER_NOT_FOUND,
   CONNECTION_REQUEST_UPDATED,
+  SELF_CONNECTION_REVIEW,
+  CONNECTION_REQUEST_ALREADY_REVIEWED,
+  CONNECTION_REQUESTS_DOES_NOT_EXIST,
+  CONNECTION_REQUESTS_REVIEWED,
 } = RESPONSE_MESSAGE;
 
 export const sendInterest = async (
@@ -65,6 +70,50 @@ export const sendInterest = async (
     await connectionRequest.save();
 
     return res.status(CREATED).json({ message: CONNECTION_REQUEST_SENT });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const reviewInterest = async (
+  req: Request<ReviewerId>,
+  res: Response<IApiResponse<IConnectionRequest>>,
+  next: NextFunction
+) => {
+  const { senderId, status } = req.params;
+  const { _id } = req.user as UserDetailsWithId;
+
+  try {
+    if (_id.toString() === senderId) {
+      throw new Error(SELF_CONNECTION_REVIEW);
+    }
+
+    const doesReceiverExist = await User.findOne({ _id: senderId });
+    if (!doesReceiverExist) {
+      throw new Error(USER_NOT_FOUND);
+    }
+
+    const existingRequest = await ConnectionRequest.findOne({
+      sender: senderId,
+      receiver: _id,
+      status: 'interested',
+    });
+
+    if (!existingRequest) {
+      return res
+        .status(BAD_REQUEST)
+        .json({ message: CONNECTION_REQUESTS_DOES_NOT_EXIST });
+    }
+
+    if (existingRequest.status === status) {
+      return res
+        .status(BAD_REQUEST)
+        .json({ message: CONNECTION_REQUEST_ALREADY_REVIEWED });
+    }
+
+    existingRequest.status = status;
+    await existingRequest.save();
+    return res.json({ message: CONNECTION_REQUESTS_REVIEWED });
   } catch (error) {
     return next(error);
   }

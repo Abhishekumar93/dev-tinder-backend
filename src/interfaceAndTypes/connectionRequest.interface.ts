@@ -1,5 +1,5 @@
 import z from 'zod';
-import { receiverSchema } from '../SchemaValidator';
+import { receiverSchema, reviewerSchema } from '../SchemaValidator';
 import { Types } from 'mongoose';
 
 export interface IConnectionRequest {
@@ -9,3 +9,4 @@ export interface IConnectionRequest {
 }
 
 export type ReceiverId = z.infer<typeof receiverSchema>;
+export type ReviewerId = z.infer<typeof reviewerSchema>;

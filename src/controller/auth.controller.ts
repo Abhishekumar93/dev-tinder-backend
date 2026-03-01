@@ -3,8 +3,8 @@ import {
   DbObjectId,
   IApiResponse,
   IUser,
-  loginUserInput,
-  registerUserInput,
+  LoginUserInput,
+  RegisterUserInput,
   UserDetails,
 } from '../interfaceAndTypes';
 import { User } from '../models';
@@ -26,7 +26,7 @@ const {
 const { JWT_EXPIRES_IN, NODE_ENV } = CONFIG_VARS;
 
 export const registerUser = async (
-  req: Request<{}, {}, registerUserInput>,
+  req: Request<{}, {}, RegisterUserInput>,
   res: Response,
   next: NextFunction
 ) => {
@@ -55,7 +55,7 @@ export const registerUser = async (
 };
 
 export const loginUser = async (
-  req: Request<{}, {}, loginUserInput>,
+  req: Request<{}, {}, LoginUserInput>,
   res: Response<IApiResponse<UserDetails>>,
   next: NextFunction
 ) => {

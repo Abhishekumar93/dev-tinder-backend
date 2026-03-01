@@ -9,7 +9,6 @@ export const formatMongooseError = (err: unknown) => {
     const messages = Object.values(err.errors).map((e) => e.message);
     return { status: BAD_REQUEST, message: messages[0] };
   }
-  console.log(err, 'eerr');
 
   if (err instanceof HttpError) {
     return { status: err.status, message: err.message };

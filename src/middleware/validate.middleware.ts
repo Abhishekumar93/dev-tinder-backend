@@ -23,8 +23,6 @@ export const validateRequest =
 
     if (schemas.params) {
       const result = schemas.params.safeParse(req.params);
-      console.log(result, 'schema result');
-
       if (!result.success) {
         return handleError(result.error.issues);
       }
@@ -43,6 +41,12 @@ export const validateRequest =
   };
 
 const handleError = (errors: any[]) => {
-  const errorMessages = errors.map((issue) => issue.message);
+  const errorMessages = errors.map((issue) => {
+    if (issue.code === 'invalid_type') {
+      return `${issue.message} at ${issue.path[0]}`;
+    }
+
+    return issue.message;
+  });
   return formatErrors(errorMessages);
 };

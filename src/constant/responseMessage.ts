@@ -28,5 +28,11 @@ export const RESPONSE_MESSAGE = {
   CONNECTION_REQUESTS_EXIST: 'Connection request already exists',
   CONNECTION_REQUEST_SENT: 'Interest sent successfully',
   SELF_CONNECTION_REQUEST: 'Cannot send connection request to yourself',
+  SELF_CONNECTION_REVIEW: 'Cannot review connection request from yourself',
   CONNECTION_REQUEST_UPDATED: 'Connection request updated successfully',
+  CONNECTION_REQUEST_ALREADY_REVIEWED: 'Connection request already reviewed',
+  CONNECTION_REQUESTS_DOES_NOT_EXIST: 'Connection request does not exist',
+  CONNECTION_REQUESTS_REVIEWED: 'Connection requests reviewed successfully',
+  INVALID_PAGE: 'Invalid page number',
+  INVALID_LIMIT: 'Invalid limit number',
 };

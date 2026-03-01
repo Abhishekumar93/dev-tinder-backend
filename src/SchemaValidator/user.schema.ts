@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import validator from 'validator';
 import { GENDER, RESPONSE_MESSAGE } from '../constant';
+import { queryNumericValidation } from '../utils';
 
 const {
   INVALID_EMAIL,
@@ -10,13 +11,13 @@ const {
   PASSWORD_MIN_LENGTH,
   INVALID_GENDER,
   PROFILE_PIC_INVALID_URL,
+  INVALID_LIMIT,
+  INVALID_PAGE,
 } = RESPONSE_MESSAGE;
 
 export const emailSchema = z
   .object({
-    email: z.string().refine((val) => validator.isEmail(val), {
-      message: INVALID_EMAIL,
-    }),
+    email: z.email({ message: INVALID_EMAIL }).nonempty('Email is required'),
   })
   .strict();
 
@@ -52,7 +53,6 @@ export const registerUserSchema = authDetailsSchema
   .extend(passwordResetSchema.shape)
   .strict();
 export const updateUserSchema = authDetailsSchema.partial().strict();
-
 export const loginUserSchema = z
   .object({
     password: z.string().optional(),
@@ -77,3 +77,9 @@ export const loginUserSchema = z
       });
     }
   });
+export const feedsQuerySchema = z
+  .object({
+    page: queryNumericValidation(INVALID_PAGE).optional(),
+    limit: queryNumericValidation(INVALID_LIMIT).optional(),
+  })
+  .strict();

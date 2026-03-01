@@ -1,13 +1,18 @@
 export {
   IUser,
   UserDetails,
-  loginUserInput,
-  registerUserInput,
-  updateUserInput,
-  userPassword,
-  userEmail,
+  LoginUserInput,
+  RegisterUserInput,
+  UpdateUserInput,
+  UserPassword,
+  UserEmail,
   UserDetailsWithId,
   DbObjectId,
+  FeedQuery,
 } from './user.interface';
 export { IApiResponse, IApiListResponse } from './response.interface';
-export { IConnectionRequest, ReceiverId } from './connectionRequest.interface';
+export {
+  IConnectionRequest,
+  ReceiverId,
+  ReviewerId,
+} from './connectionRequest.interface';

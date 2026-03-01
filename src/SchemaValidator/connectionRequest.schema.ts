@@ -1,6 +1,10 @@
 import { z } from 'zod';
 import validator from 'validator';
-import { CONNECTION_SENT_STATUS, RESPONSE_MESSAGE } from '../constant';
+import {
+  CONNECTION_RECEIVED_STATUS,
+  CONNECTION_SENT_STATUS,
+  RESPONSE_MESSAGE,
+} from '../constant';
 
 const { INVALID_URL, INVALID_CONNECTION_STATUS } = RESPONSE_MESSAGE;
 
@@ -15,13 +19,15 @@ export const receiverSchema = z
   })
   .strict();
 
-export const requestReviewerSchema = z
+export const reviewerSchema = z
   .object({
-    receiverId: z.string().refine((val) => validator.isMongoId(val), {
+    senderId: z.string().refine((val) => validator.isMongoId(val), {
       message: INVALID_URL,
     }),
-    status: z.string().refine((val) => CONNECTION_SENT_STATUS.includes(val), {
-      message: INVALID_CONNECTION_STATUS,
-    }),
+    status: z
+      .string()
+      .refine((val) => CONNECTION_RECEIVED_STATUS.includes(val), {
+        message: INVALID_CONNECTION_STATUS,
+      }),
   })
   .strict();

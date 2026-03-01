@@ -2,13 +2,14 @@ import { NextFunction, Request, Response } from 'express';
 import {
   IApiListResponse,
   IApiResponse,
-  updateUserInput,
+  FeedQuery,
+  UpdateUserInput,
   UserDetails,
   UserDetailsWithId,
-  userEmail,
-  userPassword,
+  UserEmail,
+  UserPassword,
 } from '../interfaceAndTypes';
-import { User } from '../models';
+import { ConnectionRequest, User } from '../models';
 import HttpStatus from 'http-status';
 import { RESPONSE_MESSAGE } from '../constant';
 import { generateHashPassword } from '../utils';
@@ -36,7 +37,7 @@ export const getLoggedInUserDetail = async (
 };
 
 export const getUserDetail = async (
-  req: Request<{}, {}, userEmail>,
+  req: Request<{}, {}, UserEmail>,
   res: Response<IApiResponse<UserDetails>>,
   next: NextFunction
 ) => {
@@ -75,7 +76,7 @@ export const getUserLists = async (
 };
 
 export const updateUserDetail = async (
-  req: Request<{}, {}, updateUserInput>,
+  req: Request<{}, {}, UpdateUserInput>,
   res: Response<IApiResponse<UserDetails>>,
   next: NextFunction
 ) => {
@@ -113,7 +114,7 @@ export const deleteUser = async (
 };
 
 export const updatePassword = async (
-  req: Request<{}, {}, userPassword>,
+  req: Request<{}, {}, UserPassword>,
   res: Response<IApiResponse<UserDetails>>,
   next: NextFunction
 ) => {
@@ -135,6 +136,115 @@ export const updatePassword = async (
     return res.json({
       message: USER_UPDATED,
       data: user,
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const getAllPendingRequests = async (
+  req: Request,
+  res: Response<IApiListResponse<UserDetails[]>>,
+  next: NextFunction
+) => {
+  try {
+    const { _id } = req.user as UserDetailsWithId;
+
+    const pendingConnectionRequests = await ConnectionRequest.find({
+      receiver: _id,
+      status: 'interested',
+    })
+      .populate<{ sender: UserDetails }>('sender', [
+        'firstName',
+        'lastName',
+        'email',
+        'profilePic',
+        'age',
+        'gender',
+      ])
+      .sort({ createdAt: -1 });
+
+    const pendingRequests: UserDetails[] = pendingConnectionRequests.map(
+      (request) => request.sender
+    );
+    return res.json({
+      message: USER_LIST_RETRIEVED,
+      data: { count: pendingRequests.length, records: pendingRequests },
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const getAllConnections = async (
+  req: Request,
+  res: Response<IApiListResponse<UserDetails[]>>,
+  next: NextFunction
+) => {
+  try {
+    const { _id } = req.user as UserDetailsWithId;
+
+    const connections = await ConnectionRequest.find({
+      $or: [{ sender: _id }, { receiver: _id }],
+      status: 'accepted',
+    })
+      .populate<{ sender: UserDetailsWithId; receiver: UserDetailsWithId }>(
+        'sender receiver',
+        ['firstName', 'lastName', 'email', 'profilePic', 'age']
+      )
+      .sort({ createdAt: -1 });
+
+    const connectedUsers: UserDetails[] = connections.map((connection) =>
+      connection.sender._id.toString() === _id.toString()
+        ? connection.receiver
+        : connection.sender
+    );
+
+    return res.json({
+      message: USER_LIST_RETRIEVED,
+      data: { count: connectedUsers.length, records: connectedUsers },
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+export const getUserFeeds = async (
+  req: Request<{}, {}, {}, FeedQuery>,
+  res: Response<IApiListResponse<UserDetails[]>>,
+  next: NextFunction
+) => {
+  try {
+    const { _id } = req.user as UserDetailsWithId;
+
+    const { page = 1 } = req.query;
+    let { limit = 10 } = req.query;
+    limit = Math.min(limit, 50);
+
+    const connections = await ConnectionRequest.find({
+      $or: [{ sender: _id }, { receiver: _id }],
+    });
+
+    const allConnectedUserIds = new Set<string>();
+    allConnectedUserIds.add(_id.toString());
+    connections.forEach((connection) => {
+      const senderId = connection.sender._id.toString();
+      const receiverId = connection.receiver._id.toString();
+      allConnectedUserIds.add(senderId);
+      allConnectedUserIds.add(receiverId);
+    });
+
+    const userFeeds = await User.find({
+      _id: { $nin: Array.from(allConnectedUserIds) },
+    })
+      .select('-password -otp -createdAt -updatedAt -__v')
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    return res.json({
+      message: USER_LIST_RETRIEVED,
+      data: { count: userFeeds.length, records: userFeeds },
     });
   } catch (error) {
     return next(error);

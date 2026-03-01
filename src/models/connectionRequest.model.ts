@@ -21,6 +21,9 @@ const connectionRequestSchema = new Schema<IConnectionRequest>(
   { timestamps: true }
 );
 
+connectionRequestSchema.index({ sender: 1, receiver: 1 }, { unique: true });
+connectionRequestSchema.index({ receiver: 1 });
+
 const ConnectionRequestModel = mongoose.model(
   'ConnectionRequest',
   connectionRequestSchema

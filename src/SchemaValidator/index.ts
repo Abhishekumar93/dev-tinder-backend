@@ -3,5 +3,7 @@ export {
   loginUserSchema,
   updateUserSchema,
   emailSchema,
+  passwordResetSchema,
+  feedsQuerySchema,
 } from './user.schema';
-export { receiverSchema } from './connectionRequest.schema';
+export { receiverSchema, reviewerSchema } from './connectionRequest.schema';
