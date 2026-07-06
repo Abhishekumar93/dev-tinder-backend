@@ -18,6 +18,7 @@ export const RESPONSE_MESSAGE = {
   PASSWORD_OTP_REQUIRED: 'Only one of password or OTP should be provided',
   SOMETHING_WENT_WRONG: 'Something went wrong. Please try again later.',
   INVALID_EMAIL: 'Email must be a valid email address',
+  REQUIRED_EMAIL: 'Email is required',
   PASSWORD_REGEX:
     'Password must include uppercase letters, lowercase letters, numbers, and symbols',
   PASSWORD_MIN_LENGTH: 'Password must be at least 8 characters long',

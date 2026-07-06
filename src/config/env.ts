@@ -16,4 +16,5 @@ export const CONFIG_VARS = {
   MONGO_URI: requireEnv('REACT_MONGO_URI'),
   JWT_SECRET: requireEnv('JWT_SECRET'),
   JWT_EXPIRES_IN: Number(requireEnv('JWT_EXPIRES_IN')),
+  FRONTEND_ORIGIN: requireEnv('FRONTEND_ORIGIN'),
 };

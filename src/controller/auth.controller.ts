@@ -94,7 +94,7 @@ export const loginUser = async (
       profilePic,
     };
 
-    const token = await generateJwtToken(user._id);
+    const token = generateJwtToken(user._id);
     res.cookie('token', token, {
       httpOnly: true,
       secure: NODE_ENV === 'production',

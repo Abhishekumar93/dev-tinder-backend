@@ -1,19 +1,26 @@
 import express, { NextFunction, Request, Response } from 'express';
 import { CONFIG_VARS } from './config/env';
-import { Server } from 'http';
+import { Server } from 'node:http';
 import { connectDB } from './config/db';
 import { gracefulShutdown } from './config/shutdown';
 import { authRoutes, connectionRequestsRouter, userRoutes } from './routes';
 import { formatMongooseError } from './utils';
 import cookieParser from 'cookie-parser';
 import { authMiddleware } from './middleware';
+import cors from 'cors';
 
 const app = express();
 
-const { PORT } = CONFIG_VARS;
+const { PORT, FRONTEND_ORIGIN } = CONFIG_VARS;
 
 let server: Server | undefined;
 
+app.use(
+  cors({
+    origin: FRONTEND_ORIGIN,
+    credentials: true,
+  })
+);
 app.use(cookieParser());
 app.use(express.json());
 

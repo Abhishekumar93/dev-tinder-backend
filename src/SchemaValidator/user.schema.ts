@@ -13,11 +13,15 @@ const {
   PROFILE_PIC_INVALID_URL,
   INVALID_LIMIT,
   INVALID_PAGE,
+  REQUIRED_EMAIL,
 } = RESPONSE_MESSAGE;
 
 export const emailSchema = z
   .object({
-    email: z.email({ message: INVALID_EMAIL }).nonempty('Email is required'),
+    email: z
+      .string(REQUIRED_EMAIL)
+      .min(1, REQUIRED_EMAIL)
+      .pipe(z.email({ message: INVALID_EMAIL })),
   })
   .strict();
 
