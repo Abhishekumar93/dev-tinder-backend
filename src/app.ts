@@ -40,6 +40,11 @@ async function bootstrap(): Promise<void> {
     server = app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
     });
+
+    server.on('error', (error: unknown) => {
+      console.error('❌ Server startup error:', error);
+      process.exit(1);
+    });
   } catch (error) {
     console.error('❌ Failed to start application:', error);
     process.exit(1);

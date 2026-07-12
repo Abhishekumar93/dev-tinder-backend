@@ -2,7 +2,8 @@ export const RESPONSE_MESSAGE = {
   USER_REGISTERED: 'User registered successfully',
   USER_ALREADY_EXISTS: 'User already exists!',
   USER_NOT_FOUND: 'User not found',
-  INVALID_CREDENTIALS: 'Invalid credentials',
+  INVALID_CREDENTIALS:
+    'Invalid credentials. Please check your credentials and try again.',
   USER_LOGGED_IN: 'User logged in successfully',
   USER_LOGGED_OUT: 'User logged out successfully',
   USER_UPDATED: 'User updated successfully',

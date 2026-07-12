@@ -10,7 +10,7 @@
   "author": "Abhishek Kumar",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx watch src/app.ts < /dev/null",
+    "dev": "tsx watch src/app.ts",
     "build": "tsc",
     "start": "node dist/app.js"
   },

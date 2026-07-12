@@ -8,10 +8,14 @@ export async function gracefulShutdown(
   console.log('🛑 Shutting down application...');
 
   try {
-    if (server) {
-      await new Promise<void>((resolve, reject) => {
+    if (server?.listening) {
+      await new Promise<void>((resolve) => {
         server.close((err) => {
-          if (err) return reject(err);
+          if (err) {
+            if ((err as NodeJS.ErrnoException).code !== 'ERR_SERVER_NOT_RUNNING') {
+              console.error('❌ Error during shutdown:', err);
+            }
+          }
           resolve();
         });
       });

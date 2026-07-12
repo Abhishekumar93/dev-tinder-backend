@@ -48,7 +48,7 @@ export const registerUser = async (
     });
     await user.save();
 
-    return res.status(CREATED).json({ message: USER_REGISTERED, user });
+    return res.status(CREATED).json({ message: USER_REGISTERED });
   } catch (error) {
     return next(error);
   }
