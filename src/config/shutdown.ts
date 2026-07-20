@@ -7,8 +7,19 @@ export async function gracefulShutdown(
 ): Promise<never> {
   console.log('🛑 Shutting down application...');
 
+  // Force exit after 2 seconds if graceful shutdown hangs (e.g. database disconnect hangs)
+  setTimeout(() => {
+    console.error('⚠️ Graceful shutdown timed out, forcing exit.');
+    process.exit(exitCode);
+  }, 2000).unref();
+
   try {
     if (server?.listening) {
+      // Immediately destroy active/idle connections to prevent hanging (especially with HTTP Keep-Alive)
+      if (typeof server.closeAllConnections === 'function') {
+        server.closeAllConnections();
+      }
+      
       await new Promise<void>((resolve) => {
         server.close((err) => {
           if (err) {
