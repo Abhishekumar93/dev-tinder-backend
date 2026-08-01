@@ -37,4 +37,5 @@ export const RESPONSE_MESSAGE = {
   CONNECTION_REQUESTS_REVIEWED: 'Connection requests reviewed successfully',
   INVALID_PAGE: 'Invalid page number',
   INVALID_LIMIT: 'Invalid limit number',
+  FEED_LIST_UPDATED: 'Feed list updated',
 };

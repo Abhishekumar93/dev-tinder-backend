@@ -21,6 +21,7 @@ const {
   USER_LIST_RETRIEVED,
   USER_UPDATED,
   USER_DELETED,
+  FEED_LIST_UPDATED,
 } = RESPONSE_MESSAGE;
 
 export const getLoggedInUserDetail = async (
@@ -58,7 +59,7 @@ export const getUserDetail = async (
 
 export const getUserLists = async (
   _req: Request,
-  res: Response<IApiListResponse<UserDetails[]>>,
+  res: Response<IApiListResponse<UserDetails>>,
   next: NextFunction
 ) => {
   try {
@@ -144,7 +145,7 @@ export const updatePassword = async (
 
 export const getAllPendingRequests = async (
   req: Request,
-  res: Response<IApiListResponse<UserDetails[]>>,
+  res: Response<IApiListResponse<UserDetails>>,
   next: NextFunction
 ) => {
   try {
@@ -178,7 +179,7 @@ export const getAllPendingRequests = async (
 
 export const getAllConnections = async (
   req: Request,
-  res: Response<IApiListResponse<UserDetails[]>>,
+  res: Response<IApiListResponse<UserDetails>>,
   next: NextFunction
 ) => {
   try {
@@ -211,7 +212,7 @@ export const getAllConnections = async (
 
 export const getUserFeeds = async (
   req: Request<{}, {}, {}, FeedQuery>,
-  res: Response<IApiListResponse<UserDetails[]>>,
+  res: Response<IApiListResponse<UserDetails>>,
   next: NextFunction
 ) => {
   try {
@@ -243,7 +244,7 @@ export const getUserFeeds = async (
       .limit(limit);
 
     return res.json({
-      message: USER_LIST_RETRIEVED,
+      message: FEED_LIST_UPDATED,
       data: { count: userFeeds.length, records: userFeeds },
     });
   } catch (error) {
