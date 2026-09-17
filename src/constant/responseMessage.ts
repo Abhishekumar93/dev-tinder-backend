@@ -6,7 +6,7 @@ export const RESPONSE_MESSAGE = {
     'Invalid credentials. Please check your credentials and try again.',
   USER_LOGGED_IN: 'User logged in successfully',
   USER_LOGGED_OUT: 'User logged out successfully',
-  USER_UPDATED: 'User updated successfully',
+  USER_UPDATED: 'Profile updated successfully',
   USER_DELETED: 'User deleted successfully',
   DELETE_USER_FAILED: 'Delete failed: User not found',
   USER_RETRIEVED: 'User details retrieved successfully',

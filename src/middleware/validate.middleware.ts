@@ -34,7 +34,12 @@ export const validateRequest =
       if (!result.success) {
         return handleError(result.error.issues);
       }
-      req.query = result.data;
+      Object.defineProperty(req, 'query', {
+        value: result.data,
+        writable: true,
+        enumerable: true,
+        configurable: true,
+      });
     }
 
     return next();

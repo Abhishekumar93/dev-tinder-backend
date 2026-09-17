@@ -4,12 +4,8 @@ import validator from 'validator';
 import { GENDER, RESPONSE_MESSAGE } from '../constant';
 
 const { Schema } = mongoose;
-const {
-  INVALID_EMAIL,
-  PASSWORD_REGEX,
-  INVALID_GENDER,
-  PROFILE_PIC_INVALID_URL,
-} = RESPONSE_MESSAGE;
+const { INVALID_EMAIL, INVALID_GENDER, PROFILE_PIC_INVALID_URL } =
+  RESPONSE_MESSAGE;
 
 const userSchema = new Schema<IUser>(
   {
@@ -32,11 +28,6 @@ const userSchema = new Schema<IUser>(
       type: String,
       minLength: 8,
       required: true,
-      validate(value: string) {
-        if (!validator.isStrongPassword(value)) {
-          throw new Error(PASSWORD_REGEX);
-        }
-      },
     },
     otp: { type: String, minLength: 6, maxLength: 6 },
     age: { type: Number, required: true, min: 18 },

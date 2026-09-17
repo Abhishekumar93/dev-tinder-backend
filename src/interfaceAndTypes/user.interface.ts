@@ -5,7 +5,6 @@ import {
   updateUserSchema,
 } from '../SchemaValidator';
 import {
-  emailSchema,
   feedsQuerySchema,
   passwordResetSchema,
 } from '../SchemaValidator/user.schema';
@@ -31,7 +30,6 @@ export type UserDetailsWithId = UserDetails & DbObjectId;
 export type RegisterUserInput = z.infer<typeof registerUserSchema>;
 export type UpdateUserInput = z.infer<typeof updateUserSchema>;
 export type LoginUserInput = z.infer<typeof loginUserSchema>;
-export type UserEmail = z.infer<typeof emailSchema>;
 export type UserPassword = z.infer<typeof passwordResetSchema>;
 
 export type FeedQuery = z.infer<typeof feedsQuerySchema>;

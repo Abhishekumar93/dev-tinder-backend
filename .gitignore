@@ -1,2 +1,21 @@
+# Dependencies
 node_modules/
+
+# Build output
+dist/
+
+# Environment secrets — never commit the real .env
 .env
+
+# Test coverage reports
+coverage/
+
+# Logs
+*.log
+npm-debug.log*
+
+# TypeScript incremental build cache
+*.tsbuildinfo
+
+# macOS
+.DS_Store

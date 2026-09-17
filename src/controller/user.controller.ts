@@ -6,7 +6,6 @@ import {
   UpdateUserInput,
   UserDetails,
   UserDetailsWithId,
-  UserEmail,
   UserPassword,
 } from '../interfaceAndTypes';
 import { ConnectionRequest, User } from '../models';
@@ -31,26 +30,6 @@ export const getLoggedInUserDetail = async (
 ) => {
   try {
     const user = req.user as UserDetails;
-    return res.json({ message: USER_RETRIEVED, data: user });
-  } catch (error) {
-    return next(error);
-  }
-};
-
-export const getUserDetail = async (
-  req: Request<{}, {}, UserEmail>,
-  res: Response<IApiResponse<UserDetails>>,
-  next: NextFunction
-) => {
-  const email = req.body.email;
-
-  try {
-    const user: UserDetails | null = await User.findOne({ email }).select(
-      '-password -otp -createdAt -updatedAt -__v'
-    );
-    if (!user) {
-      return res.status(NOT_FOUND).json({ message: USER_NOT_FOUND });
-    }
     return res.json({ message: USER_RETRIEVED, data: user });
   } catch (error) {
     return next(error);
@@ -88,6 +67,10 @@ export const updateUserDetail = async (
       returnDocument: 'after',
       runValidators: true,
     }).select('-password -otp -createdAt -updatedAt -__v')) as UserDetails;
+
+    if (!user) {
+      return res.status(NOT_FOUND).json({ message: USER_NOT_FOUND });
+    }
 
     return res.json({
       message: USER_UPDATED,
@@ -130,9 +113,13 @@ export const updatePassword = async (
       { password: hashedPassword },
       {
         returnDocument: 'after',
-        runValidators: true,
+        runValidators: false,
       }
     ).select('-password -otp -createdAt -updatedAt -__v')) as UserDetails;
+
+    if (!user) {
+      return res.status(NOT_FOUND).json({ message: USER_NOT_FOUND });
+    }
 
     return res.json({
       message: USER_UPDATED,
@@ -229,8 +216,8 @@ export const getUserFeeds = async (
     const allConnectedUserIds = new Set<string>();
     allConnectedUserIds.add(_id.toString());
     connections.forEach((connection) => {
-      const senderId = connection.sender._id.toString();
-      const receiverId = connection.receiver._id.toString();
+      const senderId = connection.sender.toString();
+      const receiverId = connection.receiver.toString();
       allConnectedUserIds.add(senderId);
       allConnectedUserIds.add(receiverId);
     });

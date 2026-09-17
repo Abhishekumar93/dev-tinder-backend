@@ -2,6 +2,8 @@ import { ObjectId } from 'mongoose';
 import { CONFIG_VARS } from '../config/env';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { RESPONSE_MESSAGE } from '../constant';
+import { HttpError } from './htttpError';
+import HttpStatus from 'http-status';
 
 const { JWT_SECRET, JWT_EXPIRES_IN } = CONFIG_VARS;
 
@@ -17,6 +19,6 @@ export const verifyJwtToken = (token: string): ObjectId => {
 
     return decoded._id;
   } catch {
-    throw new Error(RESPONSE_MESSAGE.UNAUTHORIZED);
+    throw new HttpError(HttpStatus.UNAUTHORIZED, RESPONSE_MESSAGE.UNAUTHORIZED);
   }
 };

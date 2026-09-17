@@ -13,7 +13,7 @@ const requireEnv = (name: string): string => {
 export const CONFIG_VARS = {
   NODE_ENV: requireEnv('NODE_ENV'),
   PORT: Number(requireEnv('PORT')),
-  MONGO_URI: requireEnv('REACT_MONGO_URI'),
+  MONGO_URI: requireEnv('MONGO_URI'),
   JWT_SECRET: requireEnv('JWT_SECRET'),
   JWT_EXPIRES_IN: Number(requireEnv('JWT_EXPIRES_IN')),
   FRONTEND_ORIGIN: requireEnv('FRONTEND_ORIGIN'),

@@ -9,7 +9,7 @@ import cookieParser from 'cookie-parser';
 import { authMiddleware } from './middleware';
 import cors from 'cors';
 
-const app = express();
+export const app = express();
 
 const { PORT, FRONTEND_ORIGIN } = CONFIG_VARS;
 
@@ -24,10 +24,15 @@ app.use(
 app.use(cookieParser());
 app.use(express.json());
 
+app.get('/health', (_req: Request, res: Response) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
+
 app.use('/api/auth', authRoutes);
 app.use('/api/user', authMiddleware, userRoutes);
 app.use('/api/connection-requests', authMiddleware, connectionRequestsRouter);
 
+// Centralized error handler — must be registered last and have 4 parameters.
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
   const { status, message } = formatMongooseError(err);
   res.status(status).json({ message });
@@ -51,22 +56,26 @@ async function bootstrap(): Promise<void> {
   }
 }
 
-process.on('SIGINT', () => {
-  gracefulShutdown(server, 0);
-});
+// Only start the server and register process listeners when not in test mode.
+// Tests import `app` directly and manage their own DB via mongodb-memory-server.
+if (process.env['NODE_ENV'] !== 'test') {
+  process.on('SIGINT', () => {
+    gracefulShutdown(server, 0);
+  });
 
-process.on('SIGTERM', () => {
-  gracefulShutdown(server, 0);
-});
+  process.on('SIGTERM', () => {
+    gracefulShutdown(server, 0);
+  });
 
-process.on('uncaughtException', (error) => {
-  console.error('🔥 Uncaught Exception:', error);
-  gracefulShutdown(server, 1);
-});
+  process.on('uncaughtException', (error) => {
+    console.error('🔥 Uncaught Exception:', error);
+    gracefulShutdown(server, 1);
+  });
 
-process.on('unhandledRejection', (reason) => {
-  console.error('🔥 Unhandled Rejection:', reason);
-  gracefulShutdown(server, 1);
-});
+  process.on('unhandledRejection', (reason) => {
+    console.error('🔥 Unhandled Rejection:', reason);
+    gracefulShutdown(server, 1);
+  });
 
-bootstrap();
+  bootstrap();
+}

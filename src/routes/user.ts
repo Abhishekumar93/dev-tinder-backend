@@ -4,7 +4,6 @@ import {
   getAllConnections,
   getAllPendingRequests,
   getLoggedInUserDetail,
-  getUserDetail,
   getUserFeeds,
   getUserLists,
   updatePassword,
@@ -12,7 +11,7 @@ import {
 } from '../controller';
 import { validateRequest } from '../middleware';
 import {
-  emailSchema,
+  feedsQuerySchema,
   passwordResetSchema,
   updateUserSchema,
 } from '../SchemaValidator';
@@ -20,11 +19,6 @@ import {
 const userRoutes = Router();
 
 userRoutes.get('/list', getUserLists);
-userRoutes.get(
-  '/profile',
-  validateRequest({ body: emailSchema }),
-  getUserDetail
-);
 userRoutes.patch(
   '/update-password',
   validateRequest({ body: passwordResetSchema }),
@@ -37,7 +31,11 @@ userRoutes.patch(
 );
 userRoutes.get('/connections', getAllConnections);
 userRoutes.get('/pending-requests', getAllPendingRequests);
-userRoutes.get('/feed', getUserFeeds);
+userRoutes.get(
+  '/feed',
+  validateRequest({ query: feedsQuerySchema }),
+  getUserFeeds
+);
 userRoutes.delete('/', deleteUser);
 userRoutes.get('/', getLoggedInUserDetail);
 

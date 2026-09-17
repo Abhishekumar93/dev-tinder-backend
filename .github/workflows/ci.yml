@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main, 'develop']
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    name: Lint, Test & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Test
+        run: npm test
+        env:
+          NODE_ENV: test
+          # Tests use mongodb-memory-server — no real DB connection needed.
+          # The remaining vars are required by env.ts at import time.
+          MONGO_URI: mongodb://localhost:27017/test
+          JWT_SECRET: ci-test-jwt-secret-at-least-32-characters-long
+          JWT_EXPIRES_IN: '86400'
+          PORT: '8000'
+          FRONTEND_ORIGIN: http://localhost:3000
+
+      - name: Build
+        run: npm run build

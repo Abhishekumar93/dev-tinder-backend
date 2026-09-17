@@ -19,7 +19,6 @@ const {
   USER_NOT_FOUND,
   CONNECTION_REQUEST_UPDATED,
   SELF_CONNECTION_REVIEW,
-  CONNECTION_REQUEST_ALREADY_REVIEWED,
   CONNECTION_REQUESTS_DOES_NOT_EXIST,
   CONNECTION_REQUESTS_REVIEWED,
 } = RESPONSE_MESSAGE;
@@ -88,8 +87,8 @@ export const reviewInterest = async (
       throw new Error(SELF_CONNECTION_REVIEW);
     }
 
-    const doesReceiverExist = await User.findOne({ _id: senderId });
-    if (!doesReceiverExist) {
+    const doesSenderExist = await User.findOne({ _id: senderId });
+    if (!doesSenderExist) {
       throw new Error(USER_NOT_FOUND);
     }
 
@@ -103,12 +102,6 @@ export const reviewInterest = async (
       return res
         .status(BAD_REQUEST)
         .json({ message: CONNECTION_REQUESTS_DOES_NOT_EXIST });
-    }
-
-    if (existingRequest.status === status) {
-      return res
-        .status(BAD_REQUEST)
-        .json({ message: CONNECTION_REQUEST_ALREADY_REVIEWED });
     }
 
     existingRequest.status = status;

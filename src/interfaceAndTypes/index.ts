@@ -5,7 +5,6 @@ export {
   RegisterUserInput,
   UpdateUserInput,
   UserPassword,
-  UserEmail,
   UserDetailsWithId,
   DbObjectId,
   FeedQuery,
