@@ -1,21 +1,21 @@
 # DevTinder Backend
 
-A robust, production-grade RESTful API backend for **DevTinder** — a developer networking platform designed to help software engineers discover, connect, and collaborate with peer developers based on skills, interests, and background.
+A TypeScript REST API for **DevTinder** — a developer networking platform designed to help software engineers discover, connect, and collaborate with peer developers based on skills, interests, and background.
 
 ---
 
 ## 🛠️ Technology Stack
 
-| Layer | Technology | Purpose |
-|---|---|---|
-| **Runtime & Language** | Node.js (v20+) & TypeScript (v5+) | Strict type safety and modern JavaScript execution |
-| **Web Framework** | Express 5 | Web framework with native async error handling |
-| **Database & ODM** | MongoDB & Mongoose (v8) | Document database with schema definitions & indexes |
-| **Validation** | Zod (v4) & validator.js | Strong request validation for body, params, and query |
-| **Authentication** | JSON Web Tokens (`jsonwebtoken`) & `bcrypt` | Secure HttpOnly cookie-based session management |
-| **Testing** | Vitest, Supertest, MongoDB Memory Server | Isolated integration tests with v8 code coverage |
-| **Code Quality** | ESLint 9 (Flat Config), Prettier | Linting and code formatting standards |
-| **CI/CD** | GitHub Actions | Automated lint, test, and build pipeline |
+| Layer                  | Technology                                  | Purpose                                               |
+| ---------------------- | ------------------------------------------- | ----------------------------------------------------- |
+| **Runtime & Language** | Node.js (v20+) & TypeScript (v5+)           | Strict type safety and modern JavaScript execution    |
+| **Web Framework**      | Express 5                                   | Web framework with native async error handling        |
+| **Database & ODM**     | MongoDB & Mongoose (v8)                     | Document database with schema definitions & indexes   |
+| **Validation**         | Zod (v4) & validator.js                     | Strong request validation for body, params, and query |
+| **Authentication**     | JSON Web Tokens (`jsonwebtoken`) & `bcrypt` | Secure HttpOnly cookie-based session management       |
+| **Testing**            | Vitest, Supertest, MongoDB Memory Server    | Isolated integration tests with v8 code coverage      |
+| **Code Quality**       | ESLint 9 (Flat Config), Prettier            | Linting and code formatting standards                 |
+| **CI/CD**              | GitHub Actions                              | Automated lint, test, and build pipeline              |
 
 ---
 
@@ -117,29 +117,29 @@ Copy `.env.example` to `.env` and fill in your values:
 cp .env.example .env
 ```
 
-| Variable | Type | Description | Example |
-|---|---|---|---|
-| `NODE_ENV` | String | Application runtime environment | `development` / `production` / `test` |
-| `PORT` | Number | Server listening port | `8000` |
-| `MONGO_URI` | String | MongoDB connection URI string | `mongodb://localhost:27017/devtinder` |
-| `JWT_SECRET` | String | Secret key for signing JWTs (min 32 characters) | `your_secure_32_character_secret_key` |
-| `JWT_EXPIRES_IN` | String | Lifetime of authentication token | `86400` (1 day in seconds) |
-| `FRONTEND_ORIGIN` | String | CORS allowed origin | `http://localhost:5173` |
+| Variable          | Type   | Description                                     | Example                               |
+| ----------------- | ------ | ----------------------------------------------- | ------------------------------------- |
+| `NODE_ENV`        | String | Application runtime environment                 | `development` / `production` / `test` |
+| `PORT`            | Number | Server listening port                           | `8000`                                |
+| `MONGO_URI`       | String | MongoDB connection URI string                   | `mongodb://localhost:27017/devtinder` |
+| `JWT_SECRET`      | String | Secret key for signing JWTs (min 32 characters) | `your_secure_32_character_secret_key` |
+| `JWT_EXPIRES_IN`  | String | Lifetime of authentication token                | `86400` (1 day in seconds)            |
+| `FRONTEND_ORIGIN` | String | CORS allowed origin                             | `http://localhost:5173`               |
 
 ---
 
 ## 📜 Available Scripts
 
-| Command | Description |
-|---|---|
-| `npm run dev` | Starts server with live-reloading via `tsx watch` |
-| `npm run build` | Compiles TypeScript into the `dist/` directory |
-| `npm start` | Runs the compiled production build from `dist/app.js` |
-| `npm test` | Runs the complete integration test suite with Vitest |
-| `npm run test:watch` | Runs test runner in interactive watch mode |
+| Command                 | Description                                                    |
+| ----------------------- | -------------------------------------------------------------- |
+| `npm run dev`           | Starts server with live-reloading via `tsx watch`              |
+| `npm run build`         | Compiles TypeScript into the `dist/` directory                 |
+| `npm start`             | Runs the compiled production build from `dist/app.js`          |
+| `npm test`              | Runs the complete integration test suite with Vitest           |
+| `npm run test:watch`    | Runs test runner in interactive watch mode                     |
 | `npm run test:coverage` | Generates a v8 code coverage report (enforces ≥85% thresholds) |
-| `npm run lint` | Lints the codebase using ESLint 9 |
-| `npm run format` | Auto-formats codebase using Prettier |
+| `npm run lint`          | Lints the codebase using ESLint 9                              |
+| `npm run format`        | Auto-formats codebase using Prettier                           |
 
 ---
 
@@ -147,40 +147,40 @@ cp .env.example .env
 
 ### Health Check
 
-| Method | Endpoint | Auth Required | Description |
-|---|---|---|---|
-| `GET` | `/health` | No | Returns server liveness status and timestamp |
+| Method | Endpoint  | Auth Required | Description                                  |
+| ------ | --------- | ------------- | -------------------------------------------- |
+| `GET`  | `/health` | No            | Returns server liveness status and timestamp |
 
 ### Authentication (`/api/auth`)
 
-| Method | Endpoint | Auth Required | Description |
-|---|---|---|---|
-| `POST` | `/api/auth/signup` | No | Register a new user account |
-| `POST` | `/api/auth/login` | No | Authenticate with email + password (or OTP) and set JWT cookie |
-| `POST` | `/api/auth/logout` | No | Invalidate session by clearing JWT cookie |
+| Method | Endpoint           | Auth Required | Description                                                    |
+| ------ | ------------------ | ------------- | -------------------------------------------------------------- |
+| `POST` | `/api/auth/signup` | No            | Register a new user account                                    |
+| `POST` | `/api/auth/login`  | No            | Authenticate with email + password (or OTP) and set JWT cookie |
+| `POST` | `/api/auth/logout` | No            | Invalidate session by clearing JWT cookie                      |
 
 ### User Management (`/api/user`)
 
 All user endpoints require an authenticated session cookie.
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/user/` | Fetch current logged-in user profile |
-| `PATCH` | `/api/user/` | Update profile fields (`firstName`, `lastName`, `age`, `gender`, `profilePic`, `about`, `bio`) |
-| `PATCH` | `/api/user/update-password` | Update account password (enforces strong password policy) |
-| `DELETE` | `/api/user/` | Delete the authenticated user account |
-| `GET` | `/api/user/feed` | Paginated feed of prospective developers (supports `?page=1&limit=10`) |
-| `GET` | `/api/user/list` | Public directory listing of developers |
-| `GET` | `/api/user/connections` | List all accepted connections for current user |
-| `GET` | `/api/user/pending-requests` | List all incoming `interested` requests sent to current user |
+| Method   | Endpoint                     | Description                                                                                    |
+| -------- | ---------------------------- | ---------------------------------------------------------------------------------------------- |
+| `GET`    | `/api/user/`                 | Fetch current logged-in user profile                                                           |
+| `PATCH`  | `/api/user/`                 | Update profile fields (`firstName`, `lastName`, `age`, `gender`, `profilePic`, `about`, `bio`) |
+| `PATCH`  | `/api/user/update-password`  | Update account password (enforces strong password policy)                                      |
+| `DELETE` | `/api/user/`                 | Delete the authenticated user account                                                          |
+| `GET`    | `/api/user/feed`             | Paginated feed of prospective developers (supports `?page=1&limit=10`)                         |
+| `GET`    | `/api/user/list`             | Public directory listing of developers                                                         |
+| `GET`    | `/api/user/connections`      | List all accepted connections for current user                                                 |
+| `GET`    | `/api/user/pending-requests` | List all incoming `interested` requests sent to current user                                   |
 
 ### Connection Requests (`/api/connection-requests`)
 
 All connection request endpoints require an authenticated session cookie.
 
-| Method | Endpoint | Description |
-|---|---|---|
-| `POST` | `/api/connection-requests/send/:status/:receiverId` | Send a request to `:receiverId`. `:status` must be `interested` or `ignored` |
+| Method | Endpoint                                            | Description                                                                             |
+| ------ | --------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `POST` | `/api/connection-requests/send/:status/:receiverId` | Send a request to `:receiverId`. `:status` must be `interested` or `ignored`            |
 | `POST` | `/api/connection-requests/review/:status/:senderId` | Review an incoming request from `:senderId`. `:status` must be `accepted` or `rejected` |
 
 ---
@@ -248,4 +248,5 @@ npm run test:coverage
 ## 👤 Author
 
 **Abhishek Kumar**
+
 - GitHub: [@Abhishekumar93](https://github.com/Abhishekumar93)
