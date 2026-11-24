@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import express, { NextFunction, Request, Response } from 'express';
 import { CONFIG_VARS } from './config/env';
 import { Server } from 'node:http';
@@ -10,14 +11,15 @@ import { authMiddleware } from './middleware';
 import cors from 'cors';
 
 export const app = express();
+app.disable('x-powered-by');
 
-const { PORT, FRONTEND_ORIGIN } = CONFIG_VARS;
+const { PORT, REACT_FRONTEND_ORIGIN, ANGULAR_FRONTEND_ORIGIN } = CONFIG_VARS;
 
 let server: Server | undefined;
 
 app.use(
   cors({
-    origin: FRONTEND_ORIGIN,
+    origin: [REACT_FRONTEND_ORIGIN, ANGULAR_FRONTEND_ORIGIN],
     credentials: true,
   })
 );
@@ -60,22 +62,22 @@ async function bootstrap(): Promise<void> {
 // Tests import `app` directly and manage their own DB via mongodb-memory-server.
 if (process.env['NODE_ENV'] !== 'test') {
   process.on('SIGINT', () => {
-    gracefulShutdown(server, 0);
+    void gracefulShutdown(server, 0);
   });
 
   process.on('SIGTERM', () => {
-    gracefulShutdown(server, 0);
+    void gracefulShutdown(server, 0);
   });
 
   process.on('uncaughtException', (error) => {
     console.error('🔥 Uncaught Exception:', error);
-    gracefulShutdown(server, 1);
+    void gracefulShutdown(server, 1);
   });
 
   process.on('unhandledRejection', (reason) => {
     console.error('🔥 Unhandled Rejection:', reason);
-    gracefulShutdown(server, 1);
+    void gracefulShutdown(server, 1);
   });
 
-  bootstrap();
+  void bootstrap();
 }

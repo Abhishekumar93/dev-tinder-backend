@@ -1,4 +1,5 @@
-import type { Server } from 'http';
+/* eslint-disable no-console */
+import type { Server } from 'node:http';
 import { disconnectDB } from './db';
 
 export async function gracefulShutdown(
@@ -19,11 +20,13 @@ export async function gracefulShutdown(
       if (typeof server.closeAllConnections === 'function') {
         server.closeAllConnections();
       }
-      
+
       await new Promise<void>((resolve) => {
         server.close((err) => {
           if (err) {
-            if ((err as NodeJS.ErrnoException).code !== 'ERR_SERVER_NOT_RUNNING') {
+            if (
+              (err as NodeJS.ErrnoException).code !== 'ERR_SERVER_NOT_RUNNING'
+            ) {
               console.error('❌ Error during shutdown:', err);
             }
           }
